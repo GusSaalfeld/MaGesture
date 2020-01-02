@@ -39,7 +39,6 @@ public class Enemy : MonoBehaviour, IDamageable, IGravityBallTargetable
         }
     }
 
-    //Possible error: update might mess up attacking if one is attacking obelisk that wasn't destroyed
     public void UpdateDestination(GameObject destination)
     {
         if (currDest != destination)
@@ -50,6 +49,7 @@ public class Enemy : MonoBehaviour, IDamageable, IGravityBallTargetable
         }
     }
 
+    //Default attack involves close quarter punches, but can be overwritten by enemy types.
     protected virtual IEnumerator AttackRoutine()
     {
         while (true)
@@ -68,102 +68,27 @@ public class Enemy : MonoBehaviour, IDamageable, IGravityBallTargetable
             //Enable attack animation and deal damage to target
             navMeshAgent.isStopped = true;
 
+            //Alternate between punch animations
             if (animator.GetInteger("currentAnim") != 3 && animator.GetInteger("currentAnim") != 4)
             {
                 UpdateCurrentAnimation(3 + Random.Range(0, 2), true);
             }
+            
             hitbox.Target.TakeDamage(Strength, SpellElement.None);
             yield return new WaitForSeconds(Random.Range(minAttackCooldown, maxAttackCooldown));
         }
     }
 
+    //Ensures seperation between when enemy is capable of attacking and what he does when he attacks 
     protected bool CanAttack()
     {
         return !IsBeingTargeted && hitbox.Target != null && !hitbox.Target.Equals(null) && hitbox.Target.Health > 0;
     }
 
-    #region AI: Sheltering Under EnemyMage's shield
-    private IEnumerator ShelterUnderEnemyMageRoutine()
-    {
-        if (this is EnemyMage) {
-            yield break;
-        }
-        EnemyMage toShelterUnder = null;
-        while (true)
-        {
-            toShelterUnder = FindBestEnemyMage();
-            if (toShelterUnder != null)
-            {
-                
-                GameObject shelterDestination = toShelterUnder.gameObject;
-                GameObject primaryDestination = currDest;
-
-                //Take shelter under the EnemyMage until it's destroyed/dies
-                while (toShelterUnder == null || toShelterUnder.Equals(null) || !toShelterUnder.IsAlive)
-                {
-                    if (currDest != shelterDestination)
-                    {
-                        primaryDestination = currDest;
-                    }
-                    SetDestination(toShelterUnder.gameObject);
-                    yield return new WaitForSeconds(0.1f);
-                }
-
-                //Revert to primary destination
-                SetDestination(primaryDestination);
-            }
-            yield return new WaitForSeconds(10f);
-        }
-    }
-
-    /// <summary>
-    /// Find the best EnemyMage to take shelter under.
-    /// </summary>
-    private EnemyMage FindBestEnemyMage()
-    {
-        //Get nearby Colliders
-        Collider[] enemyMages = Physics.OverlapSphere(transform.position, 15f);
-
-        //Find the best EnemyMage to shelter under
-        float lowestScore = Mathf.Infinity;
-        EnemyMage bestShieldEnemy = null;
-        foreach (Collider c in enemyMages)
-        {
-            EnemyMage enemyMage = c.GetComponent<EnemyMage>();
-            if (enemyMage == null)
-            {
-                continue;
-            }
-
-            float score =
-              Vector3.Distance(enemyMage.transform.position, transform.position) +
-              Vector3.Distance(enemyMage.transform.position, navMeshAgent.destination);
-            if (score < lowestScore)
-            {
-                lowestScore = score;
-                bestShieldEnemy = enemyMage;
-            }
-        }
-
-        if (bestShieldEnemy == null)
-        {
-            return null;
-        }
-
-        float distToDestination = Vector3.Distance(transform.position, navMeshAgent.destination);
-        float bestShieldEnemyDistToDestination = Vector3.Distance(bestShieldEnemy.transform.position, navMeshAgent.destination);
-        if (bestShieldEnemyDistToDestination > distToDestination + 5f)
-        {
-            return null;
-        }
-
-        return bestShieldEnemy;
-    }
-    #endregion
-
     #region IGravityBallTargetable
     public bool IsBeingTargeted { get; private set; } = false;
 
+    //Pull enemy towards center of gravity ball spell
     public void Pull(Vector3 location, float pullSpeed)
     {
         //If close enough to location, set velocity to 0 and terminate
@@ -270,24 +195,6 @@ public class Enemy : MonoBehaviour, IDamageable, IGravityBallTargetable
         rigidbody.AddExplosionForce(explosionForce, explosionPosition, explosionRadius, upwardsModifier, mode);
     }
 
-    private float remainingSlowSeconds = 0f;
-    private IEnumerator SlowRoutine()
-    {
-        float originalSpeed = navMeshAgent.speed;
-        while (true)
-        {
-            if (remainingSlowSeconds <= 0)
-            {
-                navMeshAgent.speed = originalSpeed;
-                remainingSlowSeconds = 0;
-                yield return new WaitUntil(() => remainingSlowSeconds > 0);
-                navMeshAgent.speed = 0.5f * originalSpeed;
-            }
-            remainingSlowSeconds -= Time.fixedDeltaTime;
-            yield return new WaitForFixedUpdate();
-        }
-    }
-
     private void EnableRagdoll()
     {
         animator.enabled = false;
@@ -321,6 +228,24 @@ public class Enemy : MonoBehaviour, IDamageable, IGravityBallTargetable
     }
     #endregion
 
+    private float remainingSlowSeconds = 0f;
+    private IEnumerator SlowRoutine()
+    {
+        float originalSpeed = navMeshAgent.speed;
+        while (true)
+        {
+            if (remainingSlowSeconds <= 0)
+            {
+                navMeshAgent.speed = originalSpeed;
+                remainingSlowSeconds = 0;
+                yield return new WaitUntil(() => remainingSlowSeconds > 0);
+                navMeshAgent.speed = 0.5f * originalSpeed;
+            }
+            remainingSlowSeconds -= Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+    }
+
     #region Unity Events
     private static bool todosAreLogged = false;
 
@@ -347,7 +272,6 @@ public class Enemy : MonoBehaviour, IDamageable, IGravityBallTargetable
         }
     }
 
-
     private void OnValidate()
     {
         resistanceMultiplier = Mathf.Clamp(resistanceMultiplier, 0f, 1f);
@@ -361,6 +285,8 @@ public class Enemy : MonoBehaviour, IDamageable, IGravityBallTargetable
     }
     #endregion
 
+    #region Update Enemy Animation
+    //Overloaded UpdateCurrentAnimation() for implementation simplicity
     public void UpdateCurrentAnimation(bool change_animNum, int animNum, bool change_attacking, bool attacking)
     {
         if (change_animNum)
@@ -383,4 +309,5 @@ public class Enemy : MonoBehaviour, IDamageable, IGravityBallTargetable
     {
         UpdateCurrentAnimation(true, animNum, false, false);
     }
+    #endregion
 }
