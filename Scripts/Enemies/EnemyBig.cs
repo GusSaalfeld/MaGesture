@@ -11,6 +11,7 @@ public class EnemyBig : Enemy
 
     private AudioSource audioSource;
 
+    //This override ensures they don't ragdoll like smaller enemies do in response to being hit
     public override void ApplyExplosion(float explosionForce, Vector3 explosionPosition, float explosionRadius, float upwardsModifier, ForceMode mode)
     {
 
