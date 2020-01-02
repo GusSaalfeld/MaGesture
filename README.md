@@ -21,7 +21,7 @@ As programmer, I implemented a robust and reusable entity system, focusing heavi
   
 
 ## Notice
-Only the script folder of the project is shown here. This is since much of the project employed LFS, something our team can no longer afford, much of the project files irrelevant to my work have been deleted. If you would like access to the complete source project or wish to view it in Unity, please email: gus.saalfeld@gmail.com. 
+Only the script folder of the project is shown here. This is since much of the project employed LFS, something our team can no longer afford, much of the project files irrelevant to my work have been deleted. If you would like access to the complete source project or wish to view it in Unity, please check: https://drive.google.com/drive/folders/1dGefkwkniuK3I8p0L0tC_MZlElClxkWS?usp=sharing.
 
 ### Asset Credits
 3D Boulder Model -- Poly by Google
