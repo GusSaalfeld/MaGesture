@@ -53,12 +53,10 @@ public class WaveManager : MonoBehaviour
     }
 
     #region Wave Management
-    
     private GameObject[] attackableLocations;
     private bool noAttackableLocations => attackableLocations.Length == 0;
 
     private readonly ISet<Enemy> currentWave = new HashSet<Enemy>();
-
 
     //WARNING: Inefficient implementation as its the last week of development 
     // and I didn't know Unity allows you to edit custom structs in the inspector
@@ -190,12 +188,10 @@ public class WaveManager : MonoBehaviour
             }
         }
         return true;
-    }
-    
+    }    
     #endregion
 
     #region Spawning Enemy
-    
     //Chooses random enemy from list of available enemies
     private Enemy FindEnemyToSpawn(Wave currWave) {
         int enemyIndex = Random.Range(0, currWave.enemiesToSpawn.Count);
