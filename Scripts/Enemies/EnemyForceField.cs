@@ -19,6 +19,7 @@ public class EnemyForceField : MonoBehaviour, IDamageable
     }
 
     private void Start() {
+        //Randomly pick a spell type affinity and set forcefield color accordingly 
         if(affinity == SpellElement.None) {
             int i = Random.Range(0, 2);
             if(i == 0) {
