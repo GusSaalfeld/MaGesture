@@ -56,6 +56,7 @@ public class Obelisk : MonoBehaviour, IDamageable
     {
         int damage = ComputeDamage(baseAmount, damageType);
         
+        //Have Obelisk's light fade as it loses health
         float H;
         float S;
         float V = colorIntensity;
@@ -92,7 +93,6 @@ public class Obelisk : MonoBehaviour, IDamageable
     private void OnDeath()
     {
         //Disable the child gameobject of the obelisk containing the tower particle effects
-        // transform.GetChild(0).gameObject.SetActive(false);
 
         onDestroy.Invoke();
         GameManager.S.Audio.ObeliskDeathSound(audioSource);
@@ -100,7 +100,7 @@ public class Obelisk : MonoBehaviour, IDamageable
 
     public void ApplyExplosion(float explosionForce, Vector3 explosionPosition, float explosionRadius, float upwardsModifier, ForceMode mode)
     {
-       //Pass
+       //Does nothing
     }
     #endregion
 
