@@ -1,7 +1,8 @@
 # MaGesture
 Goofy game where players must cast spells via hand gestures to survive god's wrath. Made using Unity for Windows Mixed Reality Headset and LeapMotion.
 
-Gameplay Link: 
+*Gameplay Link: https://youtu.be/DiKTDs3aUy8*
+
 
 Team Credits: Trento (Sound Design), Henry (Programmer), Gus (Programmer), 
 Tiger (Programmer), Angelina (Art), Ron (Producer, Tutorial)
@@ -19,6 +20,7 @@ As programmer, I implemented a robust and reusable entity system, focusing heavi
 4. Wave Manager:
     https://github.com/GusSaalfeld/MaGesture/blob/master/Scripts/Entities/WaveManager.cs
   
+![](gameplay.gif)
 
 ## Notice
 Only the script folder of the project is shown here. This is since much of the project employed LFS, something our team can no longer afford, much of the project files irrelevant to my work have been deleted. If you would like access to the complete source project or wish to view it in Unity, please check: https://drive.google.com/drive/folders/1dGefkwkniuK3I8p0L0tC_MZlElClxkWS?usp=sharing.
