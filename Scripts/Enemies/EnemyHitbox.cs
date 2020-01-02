@@ -6,6 +6,7 @@ public class EnemyHitbox : MonoBehaviour
 {
     public IDamageable Target { get; private set; }
 
+    //When enemies' hitboxes collide with undestroyed defences, set it as their target
     private void OnTriggerEnter(Collider col)
     {
         if (col.CompareTag("Defence"))
