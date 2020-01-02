@@ -6,8 +6,8 @@ Team Credits: Trento (Sound Design), Henry (Programmer), Gus (Programmer),
 Tiger (Programmer), Angelina (Art), Ron (Producer, Tutorial)
 
 
-## My Contribution
-As programmer, I implemented a robust and reusable entity system, focusing heavily on good inheritance and software architecture. This was done with the aim of improving my own skills as a software engineer, as well as create an efficient pipeline for quickly creating new enemy types. I also sought to achieve safer and more efficient practices by leveraging coroutines and not using the scene inspector to link game objects. For recruiters looking at this repository to review the quality of my code, I would recommend the following sequence of files:
+## My Contribution (the Enemies folder)
+As programmer, I implemented a robust and reusable entity system, focusing heavily on good inheritance and software architecture. This was done with the aim of improving my own skills as a software engineer, as well as create an efficient pipeline for quickly creating new enemy types. I also sought to achieve safer and more efficient practices by leveraging coroutines and not using the scene inspector to link game objects. Only the code in the Enemies folder is mine. For recruiters looking at this repository to review the quality of my code, I would recommend the following sequence of files:
 
 1.  Damageable (Class that both enemies and player defenses inherit from):
     LINK
