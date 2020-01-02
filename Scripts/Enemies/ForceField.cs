@@ -63,9 +63,7 @@ public class ForceField : MonoBehaviour, IDamageable
 
     private void OnDeath()
     {
-        //Disable the child gameobject of the obelisk containing the tower particle effects
         Destroy(gameObject);
-
     }
 
     public void ApplyExplosion(float explosionForce, Vector3 explosionPosition, float explosionRadius, float upwardsModifier, ForceMode mode)
