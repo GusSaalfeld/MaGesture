@@ -11,6 +11,7 @@ public class EnemyBomber : Enemy
 
     private AudioSource audioSource;
 
+    //Override default OnDeath() so inherited Enemy code auto-implements it
     protected override void OnDeath()
     {
         //Dead enemies can no longer move
@@ -20,25 +21,21 @@ public class EnemyBomber : Enemy
         animator.enabled = false;
         gameObject.layer = 9;
 
-        //TODO: Make killed self explosion based off their affinity.
-        //  So each affinity that spell type. (Ice explosion vs. fire explosion)
+        //If he reached a defense or was killed by a player spell, explode 
         if (killedSelf)
         {
             Explode();
-            //TODO: Maybe just autoexplode him for looks.
         }
-        else
+        else if (lastSpellType != SpellElement.None)
         {
-            if (lastSpellType != SpellElement.None)
-            {
-                Explode();
-            }
+            Explode();
         }
+        
         //Clean up corpse after set amount of time
         Destroy(gameObject, 5f);
     }
 
-
+    //Override AttackRoutine so bombers don't punch
     protected override IEnumerator AttackRoutine()
     {
         while (true)
@@ -61,6 +58,7 @@ public class EnemyBomber : Enemy
         GameManager.S.Audio.EnemyBomberExplosion(audioSource);
     }
 
+    #region Unity Events
     protected override void Awake()
     {
         base.Awake();
@@ -70,4 +68,5 @@ public class EnemyBomber : Enemy
             Debug.LogWarning("Couldn't find AudioSource component.");
         }
     }
+    #endregion
 }
