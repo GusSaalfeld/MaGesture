@@ -51,7 +51,7 @@ public class Obelisk : MonoBehaviour, IDamageable
     public bool IsAlive => damageable.IsAlive;
 
     public float colorIntensity => (1 + 5 * (Health / MaxHealth));
-
+ 
     public void TakeDamage(int baseAmount, SpellElement damageType)
     {
         int damage = ComputeDamage(baseAmount, damageType);
@@ -80,6 +80,8 @@ public class Obelisk : MonoBehaviour, IDamageable
         damageable.AddDeathEffect(effect);
     }
  
+    //Separation between takedamage and compute damage important because on taking/receiving damage, 
+    //computing the damage is only one of many things that could happen.
     private int ComputeDamage(int baseAmount, SpellElement damageType)
     {
         int amount = baseAmount;
@@ -93,7 +95,6 @@ public class Obelisk : MonoBehaviour, IDamageable
     private void OnDeath()
     {
         //Disable the child gameobject of the obelisk containing the tower particle effects
-
         onDestroy.Invoke();
         GameManager.S.Audio.ObeliskDeathSound(audioSource);
     }
