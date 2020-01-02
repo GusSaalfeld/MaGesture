@@ -17,7 +17,6 @@ As programmer, I implemented a robust and reusable entity system, focusing heavi
 3.  Enemy Bomber (Demonstrates the ease of changing enemy functionality via proper inheritance): 
     https://github.com/GusSaalfeld/MaGesture/blob/master/Scripts/Entities/Enemies/EnemyBomber.cs
 4. Wave Manager:
-
     https://github.com/GusSaalfeld/MaGesture/blob/master/Scripts/Entities/WaveManager.cs
   
 
