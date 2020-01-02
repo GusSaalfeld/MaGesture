@@ -21,6 +21,9 @@ public class WaveManager : MonoBehaviour
 
     [SerializeField] private LevelManager level_manager;
 
+#pragma warning restore 0649
+
+    //For use in waves: stores an enemy type and how many to spawn
     struct EnemyTypeCounter {
         public Enemy enemyType;
         public int spawnAmount;
@@ -31,48 +34,44 @@ public class WaveManager : MonoBehaviour
     }
 
     struct Wave {
-    public int waveID;
-    public List<EnemyTypeCounter> enemiesToSpawn;
-    public bool ifSpecialStart;
-    public Enemy[] specialStartGO;
-    public bool ifSpecialEnd;
-    public Enemy[] specialEndGO;
-    //Constructor (not necessary, but helpful)
-    public Wave(int waveID, List<EnemyTypeCounter> enemiesToSpawn, bool ifSpecialStart, Enemy[] specialStartGO, bool ifSpecialEnd, Enemy[] specialEndGO) {
-        this.waveID = waveID;
-        this.enemiesToSpawn = enemiesToSpawn;
-        this.ifSpecialStart = ifSpecialStart;
-        this.specialStartGO = specialStartGO;
-        this.ifSpecialEnd = ifSpecialEnd;
-        this.specialEndGO = specialEndGO;
+        public int waveID;
+        public List<EnemyTypeCounter> enemiesToSpawn;
+        public bool ifSpecialStart;
+        public Enemy[] specialStartGO;
+        public bool ifSpecialEnd;
+        public Enemy[] specialEndGO;
+    
+        //Constructor
+        public Wave(int waveID, List<EnemyTypeCounter> enemiesToSpawn, bool ifSpecialStart, Enemy[] specialStartGO, bool ifSpecialEnd, Enemy[] specialEndGO) {
+            this.waveID = waveID;
+            this.enemiesToSpawn = enemiesToSpawn;
+            this.ifSpecialStart = ifSpecialStart;
+            this.specialStartGO = specialStartGO;
+            this.ifSpecialEnd = ifSpecialEnd;
+            this.specialEndGO = specialEndGO;
+        }
     }
-}
 
-#pragma warning restore 0649
-
+    #region Wave Management
+    
     private GameObject[] attackableLocations;
     private bool noAttackableLocations => attackableLocations.Length == 0;
 
     private readonly ISet<Enemy> currentWave = new HashSet<Enemy>();
 
 
-    //Bad Implementation as last week of development + Unity doesn't allow you 
-    //To edit custom structs in the inspector
+    //WARNING: Inefficient implementation as its the last week of development 
+    // and I didn't know Unity allows you to edit custom structs in the inspector
     private void InitializeWaves() {
         
-
         //Wave 1:
         //Create enemy types + amounts featured in wave
         List<EnemyTypeCounter> eList1 = new List<EnemyTypeCounter>();
 
         EnemyTypeCounter eGrunt1 = new EnemyTypeCounter(grunt_prefab, 10);
-        // EnemyTypeCounter eMage1 = new EnemyTypeCounter(mage_prefab, 3);
-        // EnemyTypeCounter eBomber1 = new EnemyTypeCounter(bomber_prefab, 3);
         
         //Add those types + amounts to the list of enemiesTypes.
         eList1.Add(eGrunt1);
-        // eList1.Add(eMage1);
-        // eList1.Add(eBomber1);
 
         //Create wave and add it to the list of waves
         Wave wave1 = new Wave(1, eList1, false, null, false, null);
@@ -84,7 +83,6 @@ public class WaveManager : MonoBehaviour
         EnemyTypeCounter eGrunt2 = new EnemyTypeCounter(grunt_prefab, 10);
         EnemyTypeCounter eMage2 = new EnemyTypeCounter(mage_prefab, 5);
         EnemyTypeCounter eSmall2 = new EnemyTypeCounter(small_prefab, 3);
-        // EnemyTypeCounter eBomber2 = new EnemyTypeCounter(bomber_prefab, 50);
 
         eList2.Add(eGrunt2);
         eList2.Add(eMage2);
@@ -92,13 +90,11 @@ public class WaveManager : MonoBehaviour
         Wave wave2 = new Wave(2, eList2, false, null, false, null);
         waves.Add(wave2);
 
-
         //Wave 3:
         List<EnemyTypeCounter> eList3 = new List<EnemyTypeCounter>();
 
         Enemy[] wave3Start = { grunt_prefab, grunt_prefab, grunt_prefab, grunt_prefab, grunt_prefab};
         EnemyTypeCounter eGrunt3 = new EnemyTypeCounter(grunt_prefab, 6);
-        // EnemyTypeCounter eMage3 = new EnemyTypeCounter(mage_prefab, 10);
         EnemyTypeCounter eBomber3 = new EnemyTypeCounter(bomber_prefab, 7);
         EnemyTypeCounter eMage3 = new EnemyTypeCounter(mage_prefab, 2);
         Enemy[] wave3End = { big_prefab };
@@ -108,7 +104,6 @@ public class WaveManager : MonoBehaviour
         eList3.Add(eMage3);
         Wave wave3 = new Wave(3, eList3, true, wave3Start, true, wave3End);
         waves.Add(wave3);
-
 
         //Wave 4:
         List<EnemyTypeCounter> eList4 = new List<EnemyTypeCounter>();
@@ -128,17 +123,7 @@ public class WaveManager : MonoBehaviour
         waves.Add(wave4);
     }
 
-
-    private Vector3 RandomSpawnPoint()
-    {
-        Bounds spawnAreaBounds = spawnAreas[Random.Range(0, spawnAreas.Length)].bounds;
-        return new Vector3(
-            Random.Range(spawnAreaBounds.min.x, spawnAreaBounds.max.x),
-            Random.Range(spawnAreaBounds.min.y, spawnAreaBounds.max.y),
-            Random.Range(spawnAreaBounds.min.z, spawnAreaBounds.max.z)
-        );
-    }
-
+    //Handles spawning waves
     private IEnumerator WaveRoutine()
     {
         Wave currWave;
@@ -147,7 +132,7 @@ public class WaveManager : MonoBehaviour
             Debug.Log("Starting wave " + waveNumber);
             currWave = waves[waveNumber];
 
-            //Handles any special start of wave spawn cases
+            //Handles any special start of wave spawns
             if(currWave.ifSpecialStart) {
                 for (int i = 0; i < currWave.specialStartGO.Length; i++)
                 {
@@ -187,57 +172,7 @@ public class WaveManager : MonoBehaviour
             yield return AfterWaveRoutine();
         }
     }
-
-    private Enemy FindEnemyToSpawn(Wave currWave) {
-        int enemyIndex = Random.Range(0, currWave.enemiesToSpawn.Count);
-        EnemyTypeCounter eCounter = currWave.enemiesToSpawn[enemyIndex];
-        eCounter.spawnAmount--;
-        currWave.enemiesToSpawn[enemyIndex] = eCounter;
-        //Debug.Log("Enemy spawned, left: " + eCounter.spawnAmount);
-        if(eCounter.spawnAmount <= 0) {
-            currWave.enemiesToSpawn.Remove(eCounter);
-        }
-        return eCounter.enemyType;
-    }
-
-    private void SpawnEnemy(Enemy enemyPrefab) {
-        Enemy newEnemy = Instantiate(enemyPrefab, RandomSpawnPoint(), Quaternion.identity, transform.parent);
-        newEnemy.SetDestination(FindLocation());        
-        currentWave.Add(newEnemy);
-    }
-
-
-    private GameObject FindLocation()
-    {
-
-        if(obelisks.Count > 0) {
-            GameObject obTransform = obelisks[Random.Range(0, obelisks.Count)];
-            if(obTransform == null) {
-                Debug.Log("ERROR: transform destination is null");
-            } else {
-                return obTransform;
-            }
-        } 
-            //Replace else with forcefield + then player
-            return forcefield;
-    }
-
-    private void RemoveDestroyedObelisks() {
-        for(int i = 0; i < obelisks.Count; i++) {
-            if(!obelisks[i].GetComponent<Obelisk>().IsAlive) {
-                obelisks.Remove(obelisks[i]);
-            }
-        }
-    }
-
-    private void UpdateEnemyDestination()
-    {
-           RemoveDestroyedObelisks();
-           foreach (Enemy enemy in currentWave) {
-                enemy.UpdateDestination(FindLocation());
-            }
-    }
-
+    
     private IEnumerator AfterWaveRoutine()
     {
         level_manager.Progress();
@@ -256,7 +191,77 @@ public class WaveManager : MonoBehaviour
         }
         return true;
     }
+    
+    #endregion
 
+    #region Spawning Enemy
+    
+    //Chooses random enemy from list of available enemies
+    private Enemy FindEnemyToSpawn(Wave currWave) {
+        int enemyIndex = Random.Range(0, currWave.enemiesToSpawn.Count);
+        EnemyTypeCounter eCounter = currWave.enemiesToSpawn[enemyIndex];
+        eCounter.spawnAmount--;
+        currWave.enemiesToSpawn[enemyIndex] = eCounter;
+        
+        //If wave has spawn its allotted number of an enemy type, remove it as an option 
+        if(eCounter.spawnAmount <= 0) {
+            currWave.enemiesToSpawn.Remove(eCounter);
+        }
+        return eCounter.enemyType;
+    }
+
+    //Handles spawning an enemy
+    private void SpawnEnemy(Enemy enemyPrefab) {
+        Enemy newEnemy = Instantiate(enemyPrefab, RandomSpawnPoint(), Quaternion.identity, transform.parent);
+        newEnemy.SetDestination(FindLocation());        
+        currentWave.Add(newEnemy);
+    }
+
+    //Find a random point within designated spawn area to spawn enemy
+    private Vector3 RandomSpawnPoint()
+    {
+        Bounds spawnAreaBounds = spawnAreas[Random.Range(0, spawnAreas.Length)].bounds;
+        return new Vector3(
+            Random.Range(spawnAreaBounds.min.x, spawnAreaBounds.max.x),
+            Random.Range(spawnAreaBounds.min.y, spawnAreaBounds.max.y),
+            Random.Range(spawnAreaBounds.min.z, spawnAreaBounds.max.z)
+        );
+    }
+
+    //Find a NavMesh destination (a living player defense) for enemy
+    private GameObject FindLocation()
+    {
+
+        if(obelisks.Count > 0) {
+            GameObject obTransform = obelisks[Random.Range(0, obelisks.Count)];
+            if(obTransform == null) {
+                Debug.Log("ERROR: transform destination is null");
+            } else {
+                return obTransform;
+            }
+        } 
+            return forcefield;
+    }
+
+    #endregion
+
+    private void RemoveDestroyedObelisks() {
+        for(int i = 0; i < obelisks.Count; i++) {
+            if(!obelisks[i].GetComponent<Obelisk>().IsAlive) {
+                obelisks.Remove(obelisks[i]);
+            }
+        }
+    }
+
+    private void UpdateEnemyDestination()
+    {
+           RemoveDestroyedObelisks();
+           foreach (Enemy enemy in currentWave) {
+                enemy.UpdateDestination(FindLocation());
+            }
+    }
+    
+    #region Unity Events
     private void Awake()
     {
         InitializeWaves();
@@ -268,9 +273,9 @@ public class WaveManager : MonoBehaviour
 
     }
 
-
     private void Start()
     {
+        //Once an obelisk is destroyed, enemies update their navmesh destination to different target
         foreach (GameObject obelisk in obelisks)
         {
             obelisk.GetComponent<Obelisk>().AddObeliskDeathEffect(UpdateEnemyDestination);
@@ -278,6 +283,7 @@ public class WaveManager : MonoBehaviour
         StartCoroutine(WaveRoutine());
     }
 
+    //On keyboard input p, skip wave
     private void Update()
     {
         switch (Input.inputString)
@@ -289,7 +295,9 @@ public class WaveManager : MonoBehaviour
                 break;
         }
     }
-
+    #endregion
+    
+    //For debugging purposes: skips wave
     private void SkipAllEnemies()
     {
         foreach (Enemy e in currentWave)
