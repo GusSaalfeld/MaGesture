@@ -1,5 +1,6 @@
 # MaGesture
 Goofy game where players must cast spells via hand gestures to survive god's wrath. Made using Unity for Windows Mixed Reality Headset and LeapMotion.
+
 Gameplay Link: 
 
 Team Credits: Trento (Sound Design), Henry (Programmer), Gus (Programmer), 
