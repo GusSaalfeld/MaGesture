@@ -2,6 +2,7 @@
 Goofy game where players must cast spells via hand gestures to survive god's wrath. Made using Unity for Windows Mixed Reality Headset and LeapMotion.
 
 **Gameplay Link: https://youtu.be/DiKTDs3aUy8**
+**Built Game Link: https://drive.google.com/drive/folders/1dGefkwkniuK3I8p0L0tC_MZlElClxkWS?usp=sharing**
 
 
 Team Credits: Trento (Sound Design), Henry (Programmer), Gus (Programmer), 
