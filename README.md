@@ -14,7 +14,7 @@ As programmer, I implemented a robust and reusable entity system, focusing heavi
 
 1.  Damageable (Class that both enemies and player defenses inherit from):
     https://github.com/GusSaalfeld/MaGesture/blob/master/Scripts/Entities/Damageable.cs
-2.  Enemy (Implemented then refractored multiple times until it was robust):
+2.  Enemy (Implemented then refactored multiple times until it was robust):
     https://github.com/GusSaalfeld/MaGesture/blob/master/Scripts/Entities/Enemies/Enemy.cs
 3.  Enemy Bomber (Demonstrates the ease of changing enemy functionality via proper inheritance): 
     https://github.com/GusSaalfeld/MaGesture/blob/master/Scripts/Entities/Enemies/EnemyBomber.cs
